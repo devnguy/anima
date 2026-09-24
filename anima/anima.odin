@@ -151,9 +151,9 @@ new_animation :: proc(
 	anim.oneshot = oneshot
 	anim.flip_h = flip_h
 	anim.flip_v = flip_v
+	anim.on_finished = on_finished
 	anim.index = 0
 	anim.time = 0.0
-	anim.on_finished = nil
 
 	return anim
 }
@@ -174,13 +174,14 @@ update :: proc(self: ^Animation, dt: f32) {
 		self.index = (self.index + 1) % u32(len(self.frames))
 		self.time = 0.0
 
-		on_finished, ok := self.on_finished.(OnFinishedFunc)
-		if ok {
-			on_finished(self)
-		}
-
-		if self.oneshot {
-			self.playing = false
+		if self.index == 0 {
+			on_finished, ok := self.on_finished.(OnFinishedFunc)
+			if ok {
+				on_finished(self)
+			}
+			if self.oneshot {
+				self.playing = false
+			}
 		}
 	}
 }
